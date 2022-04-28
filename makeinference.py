@@ -7,8 +7,6 @@ import pickle as cPickle
 import torch 
 import json  
 import pandas as pd
-
-
 start_time = time.time()
 
 SHAPE = (20, 20)
@@ -129,7 +127,7 @@ for filename in files:
 
 
 
-#Inference
+#Batch Inference
 results = model(imgs, size=416)
 #results.save()
 #create a list to concatenate the pandas
@@ -144,6 +142,37 @@ heads=finale_result.loc[finale_result['class'] == 1, 'class'].count()
 
 print("Number of helmets detected", helmets)
 print("Number of heads without helmets detected", heads)
+
+#get s3id and s3img values 
+
+s3id=sys.argv[2]
+s3img=sys.argv[3]
+
+
+#create the dataframe 
+df = pd.DataFrame(
+
+    {
+
+        "s3id": [],
+
+        "s3img": [],
+
+        "nb_heads": [],
+
+        "nb_helmets": [],
+
+    },
+    
+)
+
+#adding the values into the dataframe 
+df=df.append({'s3id':s3id,'s3img':s3img,'nb_heads':heads,'nb_helmets':helmets}, ignore_index=True)
+
+#convert the dataframe into json format 
+json=df.to_json(orient="records")
+
+print(json)
 
 #Delete the tiles :
 print("deleting the tiles")

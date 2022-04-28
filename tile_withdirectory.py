@@ -4,16 +4,18 @@ import os
 import sys
 
 Path= sys.argv[1]
+s3id=sys.argv[2]
+s3img=sys.argv[3]
+
+
 filename, file_extension = os.path.splitext(Path)
+
 image = cv2.imread(Path)
 
 
-
+#Get the exact image name 
 filename_split = filename.split("/")
-
 image_name = filename_split[2]
-
-image_name
 
 Directory="./tiled/%s"%image_name  
 print(Directory)
@@ -50,4 +52,4 @@ for nTileX in range(numTilesX):
 
 print("The image is tiled now we will start the classification !")
 
-os.system("python makeinference.py ./tiled")
+os.system("python makeinference.py ./tiled %s %s"%(s3id,s3img))
